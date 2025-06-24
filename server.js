@@ -1,39 +1,3 @@
-// console.log("Server file is running....")
-// console.log("Hello")
-
-
-// var result = (a,b) => {
-//     return a+b;
-// }
-
-// console.log(result(2,3))
-
-// var os = require('os');
-
-// var user = os.userInfo();
-// console.log(user);
-
-// var fs = require('fs')
-
-// fs.writeFile('greet.txt', "Hello Sohail", (err) => {
-
-    //         console.log("Error while wrriting file");
-//     }
-
-//     console.log("file written successfully");
-// })
-
-
-// json to object
-// const json = '{"name": "Sohail", "age": 19, "city": "London"}';
-// const obj = JSON.parse(json);
-// console.log("JSON to object conversion")
-// console.log(obj);
-
-// //object to json
-// console.log("Object  to JSON conversion")
-// const object = JSON.stringify(obj);
-// console.log(object)
 
 const express = require("express");
 const app = express();

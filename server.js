@@ -37,49 +37,61 @@
 
 const express = require("express");
 const app = express();
-
-
-// const MenuItem = require('./models/menu')
-
+const prompt = require('prompt-sync')();
 
 const db = require('./db');
+const Person = require('./models/person');
+
+require('dotenv').config();
+
+
+const port =  3000 || process.env.PORT ;
+
+
+const passport = require('passport');
+
+
 
 // body parser
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-const port = 4000;
+
 
 // import routes file
 const personRoutes = require('./routes/personRoutes');
 const menuItemRoutes = require('./routes/menuRoutes');
 
+
+
+//middleware function
+
+const logRequest = (req, res, next) => {
+    console.log(`${new Date().toLocaleDateString()} Request Mode to : ${req.originalUrl}`);
+    next(); //move to the next phase 
+}
+
+app.use(logRequest);
+
+
+
+
+
+app.use(passport.initialize());
+const localAuthMiddleware = passport.authenticate('local', {session: false});
+
+app.get("/",   (req,res) => {
+
+    res.send("<h1>Welcome to Our Hotel</h1>");
+})
+
 //use routes 
 app.use('/person',personRoutes);
 app.use('/menu', menuItemRoutes);
 
+app.listen(port, () => { 
 
-app.get("/", (req,res) => {
-    res.send("<h1>Welcome to Apna Kotha 😂</h1>");
-})
-
-// app.get("/user", (req,res) => {
-//     const json = {
-//         "name": "Sohail", 
-//         "age": 19, 
-//         "city": "London"
-//     };
-//     // res.send("Hey What's up?...");
-//     res.send(json);
-// })
-
-
-app.listen(port, (err) => { 
-    if(err) {
-        console.log("Error server is not running");
-    } else {
-        console.log(`Server is running on port ${port}`)
-    }
+    console.log(`Server is running on port ${port}`)
 
 })
 

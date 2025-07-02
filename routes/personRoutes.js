@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const Person = require('./../models/person')
+const {jwtAuthMiddleware, generateToken} = require('./../jwt');
 
-router.post('/', async  (req,res) => {
+router.post('/signup', async  (req,res) => {
     
     try {
 
@@ -17,7 +18,16 @@ router.post('/', async  (req,res) => {
 
         console.log('Data Saved');
         console.log("Data Saved Successfully");
-        res.status(200).json(savedPerson);
+        
+        const payload = {
+            id : response.id,
+            username : response.username
+        }
+        const token = generateToken(response.username);
+        console.log('Token is : ', token);
+
+
+        res.status(200).json({response : response, token : token});
 
     } 
     
@@ -33,6 +43,58 @@ router.post('/', async  (req,res) => {
 
 })
 
+//login rout
+router.post('/login', async (req, res) => {
+    try {
+        //extract username and password from request body
+        const {username, password} = req.body;
+
+        //find the user by username
+        const user = await Person.findOne({username : username});
+
+        //if user does not exist or password do not match
+        if(!user || !(await user.comparePassword(password))) {
+            return res.status(401).json({error : 'Invalid username or password'});
+        }
+        
+        //generate token
+        const payload = {
+            id : user.id,
+            username : user.username
+        }
+
+        const token = generateToken(payload);
+
+        res.json({token});
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({error : 'Internal server error'});
+    }
+})
+
+
+//profile route
+router.get('/profile', jwtAuthMiddleware, async (req, res) => {
+
+    try {
+
+        const userData = req.user;
+        console.log('User Data', userData);
+
+        const userId = userData.id;
+        const user = await Person.findById(userId);
+
+        res.status(200).json({user});
+
+    } catch (err) {
+
+        console.log(err);
+        res.status(500).json({error : 'Internal server error'});
+
+    }
+    
+})
 
 router.get('/', async (req,res) => {
 

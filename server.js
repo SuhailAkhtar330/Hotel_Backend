@@ -12,7 +12,7 @@ require('dotenv').config();
 const port =  3000 || process.env.PORT ;
 
 
-const passport = require('passport');
+const passport = require('./auth');
 
 
 
